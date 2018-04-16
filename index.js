@@ -12,7 +12,6 @@ const branchSection = document.querySelector('#branches-wrapper');
 const calculateBtn = document.querySelector('.btn-calculate');
 const ring = document.querySelector('#ring');
 const voltageRadio = document.querySelectorAll('.voltage-radio');
-const systemRadio = document.querySelectorAll('.type-radio');
 let selectedVS = null;
 
 
@@ -152,7 +151,46 @@ function distancesHandler(){
 	return {totalDistance, distanceValues};
 };
 
+function renderResultsBox(cooperGauge, aluminiumGauge){
+    const target = document.querySelector('.left-panel');
+    const fragment = new DocumentFragment();
 
+    const resultsWrapper = document.createElement('div');
+    const resultsHeader = document.createElement('h3');
+    const resultsHeaderText = document.createTextNode('Conductor Requerido: ');
+    const gaugesWrapper = document.createElement('div');
+    const cooperHeader = document.createElement('h4');
+    const cooperHeaderText = document.createTextNode(`Cobre: ${cooperGauge} `);
+    const aluminiumHeader = document.createElement('h4');
+    const aluminiumHeaderText = document.createTextNode(`Aluminio: ${aluminiumGauge}`);
+    const moreInfo = document.createElement('p');
+    const moreInfoText = document.createTextNode('Para más información respecto a los cálculos realizados, presione F12 y vaya a la pestaña "Cónsola".');
+
+    resultsHeader.appendChild(resultsHeaderText);
+    cooperHeader.appendChild(cooperHeaderText);
+    aluminiumHeader.appendChild(aluminiumHeaderText);
+    moreInfo.appendChild(moreInfoText);
+
+    gaugesWrapper.appendChild(cooperHeader);
+    gaugesWrapper.appendChild(aluminiumHeader);
+
+    resultsWrapper.appendChild(resultsHeader);
+    resultsWrapper.appendChild(gaugesWrapper);
+    resultsWrapper.appendChild(moreInfo);
+
+    resultsWrapper.classList.add("panel-section");
+    resultsWrapper.classList.add("results");
+    gaugesWrapper.classList.add("gauges-box");
+    moreInfo.classList.add("more-info");
+    cooperHeader.classList.add('material-styling');
+    aluminiumHeader.classList.add('material-styling');
+    cooperHeader.classList.add('cooper-styling');
+    aluminiumHeader.classList.add('aluminium-styling');
+
+    fragment.appendChild(resultsWrapper);
+
+    target.appendChild(fragment);
+}
 
 function calculate(){
 
@@ -162,13 +200,13 @@ function calculate(){
 	const loadValues = loadsHandler().loads;
 	const totalLoad = loadsHandler().totalLoad;
 	const forRing = ringCalc;
-	// const forRadial = radialCalc;
+	const forRadial = radialCalc;
 
 	// Choose between Ring / Radial System
 	if(ring.checked) {
 		forRing(totalDistance, distances, loadValues, totalLoad);
 	} else{
-		radialCalc(totalDistance, distances, loadValues, totalLoad);	
+		forRadial(totalDistance, distances, loadValues, totalLoad);
 	}
 }
 
@@ -203,6 +241,9 @@ function ringCalc(td, d, l, tl){
 	console.log(`Conductor requerido de Cobre: ${cooperGauge}`);
 	console.log(`%V Aluminio: ${pvAluminium}`);
 	console.log(`Conductor requerido de Aluminio: ${aluminiumGauge}`);
+
+	renderResultsBox(cooperGauge, aluminiumGauge);
+	return { kvaL, kvaT,  kvaII, kvaI, halfPointLoad, halfPointLoads, kvalHalfPoint, pvCooper, pvAluminium, cooperGauge, aluminiumGauge }
 }
 
 // Calculation for a radial system
@@ -226,7 +267,10 @@ function radialCalc(td, d, l, tl){
 	console.log(`%V Cobre: ${pvCooper}`);
 	console.log(`Conductor requerido de Cobre: ${cooperGauge}`);
 	console.log(`%V Aluminio: ${pvAluminium}`);
-	console.log(`Conductor requerido de Aluminio: ${aluminiumGauge}`);	
+	console.log(`Conductor requerido de Aluminio: ${aluminiumGauge}`);
+
+    renderResultsBox(cooperGauge, aluminiumGauge);
+	return { kvaL, pvCooper, pvAluminium, cooperGauge, aluminiumGauge }
 }
 
 // Required functions to perform calculation
@@ -293,9 +337,9 @@ function getCooperGauge(kvaM, vSource){
 	var voltageLvl = null;
 	var pV = null;
 
-	if(vSource == 2400) {voltageLvl = 'k24'}
-	if(vSource == 13800) {voltageLvl = 'k138'}
-	if(vSource == 34500) {voltageLvl = 'k345'}
+	if(vSource === 2400) {voltageLvl = 'k24'}
+	if(vSource === 13800) {voltageLvl = 'k138'}
+	if(vSource === 34500) {voltageLvl = 'k345'}
 
 	for(let i = 0; i < voltageLvl.length; i++){
 		let gauge = gauges[i];
@@ -327,12 +371,12 @@ function getAluminiumGauge(kvaM, vSource){
 	const k24 = [ 2.9230e-2, 2.0100e-2, 1.4280e-2, 1.2230e-2, 1.0580e-2, 0.9260e-2 ];
 	const k138 = [ 0.8840e-3, 0.6080e-3, 0.4320e-3, 0.3700e-3, 0.3200e-3, 0.2800e-3 ];
 	const k345 = [ 0.1420e-3, 0.0973e-3, 0.0682e-3, 0.0592e-3, 0.0512e-3, 0.0448e-3 ];
-	var voltageLvl = null;
-	var pV = null;
+	let voltageLvl = null;
+	let pV = null;
 
-	if(vSource == 2400) {voltageLvl = 'k24'}
-	if(vSource == 13800) {voltageLvl = 'k138'}
-	if(vSource == 34500) {voltageLvl = 'k345'}
+	if(vSource === 2400) {voltageLvl = 'k24'}
+	if(vSource === 13800) {voltageLvl = 'k138'}
+	if(vSource === 34500) {voltageLvl = 'k345'}
 
 	for(let i = 0; i < voltageLvl.length; i++){
 		let gauge = gauges[i];
@@ -360,8 +404,8 @@ confirmBranchesBtn.onclick = generateDistanceBoxes;
 calculateBtn.onclick = calculate;
 
 // can be refactored
-voltageRadio.forEach(function(button, idx){
-	button.addEventListener('click', function(ev) {
+voltageRadio.forEach(function(button){
+	button.addEventListener('click', function() {
 		selectedVS = Number(button.nextElementSibling.textContent);
 	})
-})
+});
