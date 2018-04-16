@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calculo de Conductor</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="./index.css">	
+	<link href="https://fonts.googleapis.com/css?family=Oxygen:400,700" rel="stylesheet">
+
+</head>
+<body>
+	<div class="wrapper">
+		
+		<div class="panel left-panel">
+
+			<div class="panel-section system-type">
+				<h3>Tipo</h3>
+				<div class="type-wrapper">
+					<input type="radio" name="type" class="ring type-radio" id="ring">
+					<label for="ring">Anillo</label>
+				</div>
+				<div class="type-wrapper">
+					<input type="radio" name="type" class="radial type-radio" id="radial">
+					<label for="radial">Radial</label>
+				</div>				
+			</div>
+			<div class="panel-section voltage-source">
+				<h3>Voltaje (v)</h3>
+				<div class="voltage-source-item">
+					<div class="voltage-wrapper" id="voltage1">
+						<input type="radio" name="v" class="voltage-radio" id="v1">
+						<label for="v1">2400</label>
+					</div>
+					<div class="voltage-wrapper" id="voltage2">
+						<input type="radio" name="v" class="voltage-radio" id="v2">
+						<label for="v2">13800</label>
+					</div>
+					<div class="voltage-wrapper" id="voltage3">
+						<input type="radio" name="v" class="voltage-radio" id="v3">
+						<label for="v3">34500</label>
+					</div>										
+				</div>
+			</div>			
+			<div class="panel-section branch-request">
+				<h3>N° de Ramas</h3>
+				<input type="text" name="branch-input" class="branch-input text-box" id="branch-input">
+				<button name="branch-submit" class="btn btn-manjaro branch-submit" id="branch-submit"> Agregar </button>
+			</div>
+
+			<div class="panel-section distances" id="distances">
+				<h3>Distancias (m)</h3>
+				<h4>Ingrese el numero de ramales y presione 'Agregar' para generar campos.</h4>
+			</div>
+			<button class="btn btn-calculate">Calcular</button>
+		</div>
+
+		<div class="panel right-panel">
+
+			<div class="panel-section branches-wrapper" id="branches-wrapper">	
+				<h4>Ingrese el numero de ramales y presione 'Agregar' para generar campos.</h4>
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+
+	<script src="index.js"></script>
+</body>
+</html>
