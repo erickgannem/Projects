@@ -29,7 +29,7 @@ function generateDistanceBoxes(){
 	};
 	if(!branchInput.value){
 		return;
-	};
+	}
 	distanceSection.innerHTML = `<h3>Distancias (m)</h3>`;
 	let fragment = '';
 	if(ring.checked) {
@@ -46,7 +46,7 @@ function generateDistanceBoxes(){
 
 	generateBranchBoxes(); // 1
 	generateNewLoadBox(); // 2
-};
+}
 
 function Branch(id, loads = 0, template){
 	this.id = id;
@@ -55,7 +55,7 @@ function Branch(id, loads = 0, template){
 }
 Branch.prototype.addLoad = function(){
 	this.loads += 1;
-}
+};
 
 function generateBranchBoxes(){
 	const branches = [];
@@ -80,7 +80,7 @@ function generateBranchBoxes(){
 
 	branchSection.innerHTML = fragment;
 	return {branches};
-};
+}
 
 function generateNewLoadBox(){
 	const branches = generateBranchBoxes().branches;
@@ -92,7 +92,7 @@ function generateNewLoadBox(){
 				<input type="text" name="l${idx}" id="l${idx}" class="load-input text-box" placeholder="Ej: 3*25">
 			</div> 		
 		`
-	}
+	};
 	newLoadBtn.forEach(function(btn, idx){
 		const btnGp = btn.parentNode.parentNode;
 		let fragment = null;
@@ -113,15 +113,15 @@ function generateNewLoadBox(){
 function loadsHandler(){
 	const branchContainer = document.querySelectorAll('.branch-item');
 	let loads = [];
-	let totalLoad = null;
+	let totalLoad;
 	let load = 0;
 
 
-	branchContainer.forEach( function (branch, i){
-		Array.prototype.slice.call(branch.children).forEach(function(loadWrapper, j) {
+	branchContainer.forEach(function (branch){
+		Array.prototype.slice.call(branch.children).forEach(function(loadWrapper) {
 			if(loadWrapper.classList.contains('load-wrapper') ){
 
-				Array.prototype.slice.call(loadWrapper.children).forEach(function(loadInput, k) {
+				Array.prototype.slice.call(loadWrapper.children).forEach(function(loadInput) {
 					if(loadInput.classList.contains('load-input') ){
 						load += eval(loadInput.value);
 					}
@@ -149,7 +149,7 @@ function distancesHandler(){
 		return Number(next.value) + acc;
 	}, 0);
 	return {totalDistance, distanceValues};
-};
+}
 
 function renderResultsBox(cooperGauge, aluminiumGauge){
     const target = document.querySelector('.left-panel');
@@ -302,17 +302,17 @@ function halfPointHandler(kvaII, l){
 	let halfPointLoads = [];
 	let difference = 0;
 
-	for(var i = l.length - 1; i >= 0; i--){
+	for(let i = l.length - 1; i >= 0; i--){
 		let current = l[i];
 		halfPointLoads.push(l[(l.length - 1) - i]);
 		acc += current;
 
 		if( kvaII - acc < 0){
-			halfPoint += current
+			halfPoint += current;
 			difference = Math.abs(kvaII - acc);
 			break;
-		};
-	};
+		}
+	}
 	halfPointLoads.pop();
 	halfPointLoads.push(difference);
 
@@ -334,8 +334,8 @@ function getCooperGauge(kvaM, vSource){
 	const k24 = [ 2.5950e-2, 1.8120e-2, 1.3260e-2, 1.1440e-2, 0.9990e-2, 0.8830e-2, 0.7870e-2, 0.7080e-2 ];
 	const k138 = [ 0.7850e-3, 0.5480e-3, 0.4010e-3, 0.3460e-3, 0.3020e-3, 0.2670e-3, 0.2380e-3, 0.2140e-3 ];
 	const k345 = [0.1260e-3, 0.0870e-3, 0.0642e-3, 0.0554e-3, 0.0484e-3, 0.0428e-3, 0.0381e-3, 0.0343e-3 ];
-	var voltageLvl = null;
-	var pV = null;
+	let voltageLvl = null;
+	let pV = null;
 
 	if(vSource === 2400) {voltageLvl = 'k24'}
 	if(vSource === 13800) {voltageLvl = 'k138'}
@@ -356,11 +356,9 @@ function getCooperGauge(kvaM, vSource){
 		}
 		if(pV < 1) {
 			return {
-				pV, 
+				pV,
 				gauge
 			}
-		} else {
-			throw new Error(`No existe conductor para este sistema a este nivel de voltaje (${vSource})`)
 		}
 	}
 }
