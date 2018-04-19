@@ -299,23 +299,23 @@ function kvalCalc(d, l){
 function halfPointHandler(kvaII, l){
 	let acc = 0;
 	let halfPoint = 0;
-	let halfPointLoads = [];
 	let difference = 0;
+	let halfPointLoads = new Array(...l);
 
-	for(var i = l.length - 1; i >= 0; i--){
-		let current = l[i];
-		halfPointLoads.push(l[(l.length - 1) - i]);
+	for(var i = halfPointLoads.length - 1; i >= 0; i--){
+		let current;
+		 current = halfPointLoads[i];
+
 		acc += current;
 
 		if( kvaII - acc < 0){
-			halfPoint += current
+			halfPoint = halfPointLoads[i]
 			difference = Math.abs(kvaII - acc);
+			halfPointLoads.splice(i);
+			halfPointLoads.push(difference);
 			break;
 		};
 	};
-	halfPointLoads.pop();
-	halfPointLoads.push(difference);
-
 	return {
 		difference: difference, 
 		halfPointLoad: halfPoint, 
@@ -359,8 +359,6 @@ function getCooperGauge(kvaM, vSource){
 				pV, 
 				gauge
 			}
-		} else {
-			throw new Error(`No existe conductor para este sistema a este nivel de voltaje (${vSource})`)
 		}
 	}
 }
