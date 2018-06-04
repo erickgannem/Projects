@@ -7,7 +7,7 @@
 const confirmBranchesBtn = document.querySelector('#branch-submit');
 const branchInput = document.querySelector('#branch-input');
 const distanceSection = document.querySelector('#distances');
-const distances = Array.prototype.slice.call(document.querySelectorAll('.distance-input'));
+const distances = Array.from(document.querySelectorAll('.distance-input'));
 const branchSection = document.querySelector('#branches-wrapper');
 const calculateBtn = document.querySelector('.btn-calculate');
 const ring = document.querySelector('#ring');
@@ -118,10 +118,10 @@ function loadsHandler(){
 
 
 	branchContainer.forEach( function (branch, i){
-		Array.prototype.slice.call(branch.children).forEach(function(loadWrapper, j) {
+		Array.from(branch.children).forEach(function(loadWrapper, j) {
 			if(loadWrapper.classList.contains('load-wrapper') ){
 
-				Array.prototype.slice.call(loadWrapper.children).forEach(function(loadInput, k) {
+				Array.from(loadWrapper.children).forEach(function(loadInput, k) {
 					if(loadInput.classList.contains('load-input') ){
 						load += eval(loadInput.value);
 					}
@@ -145,26 +145,26 @@ function distancesHandler(){
 	const distanceValues = [];
 
 	distanceInput.forEach( input => distanceValues.push(Number(input.value)));
-	const totalDistance = Array.prototype.slice.call(distanceInput).reduce(function(acc, next){
+	const totalDistance = Array.from(distanceInput).reduce(function(acc, next){
 		return Number(next.value) + acc;
 	}, 0);
 	return {totalDistance, distanceValues};
 };
 
 function renderResultsBox(cooperGauge, aluminiumGauge){
-    const target = document.querySelector('.left-panel');
-    const fragment = new DocumentFragment();
+  const target = document.querySelector('.left-panel');
+  const fragment = new DocumentFragment();
 
-    const resultsWrapper = document.createElement('div');
-    const resultsHeader = document.createElement('h3');
-    const resultsHeaderText = document.createTextNode('Conductor Requerido: ');
-    const gaugesWrapper = document.createElement('div');
-    const cooperHeader = document.createElement('h4');
-    const cooperHeaderText = document.createTextNode(`Cobre: ${cooperGauge} `);
-    const aluminiumHeader = document.createElement('h4');
-    const aluminiumHeaderText = document.createTextNode(`Aluminio: ${aluminiumGauge}`);
-    const moreInfo = document.createElement('p');
-    const moreInfoText = document.createTextNode('Para más información respecto a los cálculos realizados, presione F12 y vaya a la pestaña "Cónsola".');
+  const resultsWrapper = document.createElement('div');
+  const resultsHeader = document.createElement('h3');
+  const resultsHeaderText = document.createTextNode('Conductor Requerido: ');
+  const gaugesWrapper = document.createElement('div');
+  const cooperHeader = document.createElement('h4');
+  const cooperHeaderText = document.createTextNode(`Cobre: ${cooperGauge} `);
+  const aluminiumHeader = document.createElement('h4');
+  const aluminiumHeaderText = document.createTextNode(`Aluminio: ${aluminiumGauge}`);
+  const moreInfo = document.createElement('p');
+  const moreInfoText = document.createTextNode('Para más información respecto a los cálculos realizados, presione F12 y vaya a la pestaña "Cónsola".');
 
     resultsHeader.appendChild(resultsHeaderText);
     cooperHeader.appendChild(cooperHeaderText);
