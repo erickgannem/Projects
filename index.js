@@ -75,20 +75,21 @@ function renderDistanceBoxes(template) {
 //	generateNewLoadBox(); // 2
 //};
 
-function Branch(id, loads = 0, template){
-	this.id = id;
-	this.loads = loads;
-	this.template = template;
-}
-Branch.prototype.addLoad = function(){
-	this.loads += 1;
-}
+function generateBranchObject(){
+ function Branch(id, loads = 0, template) {
+ 	this.id = id;
+ 	this.loads = loads;
+ 	this.template = template;
+ };
+ Branch.prototype.addLoad = function() {
+ 	this.loads += 1;
+ };
 
-function generateBranchBoxes(){
-	const branches = [];
-	const template = (idx) => {
+ const objectsToGenerate = parseInt(branchInputEl.value, 10);
+	const objectBranches = [];
+	const template = function(idx) {
 		return `
-			<div class="branch-item">
+			<div class="branch-item" data-branch=${idx}>
 				<div class="branch-header">
 					<h3>Rama ${idx}</h3>
 					<button class="btn btn-manjaro add-load"><label class="add-load-label">+</label></button>
@@ -97,20 +98,26 @@ function generateBranchBoxes(){
 		`;
 	};
 
-	let fragment = '';
-	branchSection.innerHTML = null;
+	for(let i = 0; i < objectsToGenerate; i+=1){
+		objectBranches.push(new Branch(i + 1, 0, template(i + 1)));
+	};
+	return objectBranches; 
+};
 
-	for(let i = 0; i < branchInput.value; i+=1){
-		branches.push(new Branch(i + 1, 0, template(i + 1)))
-		fragment += branches[i].template;
-	}
+function renderBranchBox(branchesArr) {
+ let fragment = '';
+ const branchesToRender = parseInt(branchInputEl.value, 10);
 
-	branchSection.innerHTML = fragment;
-	return {branches};
+ branchSectionEl.innerHTML = null;
+ for(let i = 0; i < branchesToRender; i++) {
+  fragment = fragment + branchesArr[i].template;
+ };
+ 
+ branchSectionEl.innerHTML = fragment;
 };
 
 function generateNewLoadBox(){
-	const branches = generateBranchBoxes().branches;
+	const branches = generateBranchBoxes();
 	const newLoadBtn = document.querySelectorAll('.add-load');
 	const template = (idx) => {
 		return `
