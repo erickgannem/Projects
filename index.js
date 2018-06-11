@@ -1,52 +1,79 @@
-// Programa que permite el cálculo del conductor requerido para una red de distribución de media tensión, bien sea en anillo o radial, dependiendo de la cantidad de cargas conectadas a la misma.
-// Diseñado y desarrollado por Erick Gannem y Estefany Acuña, como parte de una asignación para la asignatura: Distribución I con el profesor Simón Ramirez
-
 "use strict";
 
 // Declarations
-const confirmBranchesBtn = document.querySelector('#branch-submit');
-const branchInput = document.querySelector('#branch-input');
-const distanceSection = document.querySelector('#distances');
-const distances = Array.from(document.querySelectorAll('.distance-input'));
-const branchSection = document.querySelector('#branches-wrapper');
-const calculateBtn = document.querySelector('.btn-calculate');
-const ring = document.querySelector('#ring');
-const voltageRadio = document.querySelectorAll('.voltage-radio');
-let selectedVS = null;
+const addBranchesEl = document.querySelector('button#branch-submit');
+const branchInputEl = document.querySelector('input#branch-input');
+const distanceSectionEl = document.querySelector('div#distances');
+const distancesEl = Array.from(document.querySelectorAll('div.distance-input'));
+const distanceBoxesEl = Array.from(document.querySelectorAll('div.distance-boxes'));
+const branchSectionEl = document.querySelector('#branches-wrapper');
+const calculateEl = document.querySelector('button.btn-calculate');
+const ringOptionEl = document.querySelector('input#ring');
+const voltageRadioEl = document.querySelectorAll('input.voltage-radio');
+let selectedVoltageSource = null;
 
 
 // Functions
+function runApp() {
+
+}
 
 // Rendering into DOM
-function generateDistanceBoxes(){
-	const template = (idx) => {
-		return `
-			<div class="distance-item">
-				<label class="label-styling">${idx}</label>
-				<input type="text" name="distance-value" class="distance-input text-box" id="d${idx}">
-			</div>
-		`;			
-	};
-	if(!branchInput.value){
-		return;
-	};
-	distanceSection.innerHTML = `<h3>Distancias (m)</h3>`;
-	let fragment = '';
-	if(ring.checked) {
-		for(let i = 0; i < Number(branchInput.value) + 1; i+=1){
-			fragment += template(i + 1);
-		}
-	} else {
-		for(let i = 0; i < branchInput.value; i+=1){
-			fragment += template(i + 1);
-		}			
-	}
-
-	distanceSection.innerHTML += fragment;
-
-	generateBranchBoxes(); // 1
-	generateNewLoadBox(); // 2
+function generateDistanceBoxes() {
+ const template = function(idx) {
+  return `
+   <div class="distance-item">
+    <label class="label-styling">${idx}</label>
+    <input type="text" name="distance-value" class="distance-input text-box" data-distance-box=${idx}>
+   </div>
+  `;
+ };
 };
+function renderDistanceBoxes(template) {
+ let fragment = '';
+ let boxesToRender = parseInt(branchInputEl.value, 10);
+
+ if (ring.checked) { // Ring systems needs an extra distance field.
+  for(let i = 0; i < boxesToRender + 1; i++) {
+   fragment = fragment + template(i + 1);
+  };
+ } else { // Radial systems needs same distance fields as loads.
+  for(let i = 0; i < boxesToRender; i++) {
+   fragment = fragment + template(i + 1);
+  };
+ };
+ distanceBoxesEl.innerHTML = fragment;
+};
+
+//function generateDistanceBoxes(){
+//	const template = (idx) => {
+//		return `
+//			<div class="distance-item">
+//				<label class="label-styling">${idx}</label>
+//				<input type="text" name="distance-value" class="distance-input text-box" id="d${idx}">
+//			</div>
+//		`;			
+//	};
+//	if(!branchInput.value){
+//		return;
+//	};
+//	distanceSection.innerHTML = `<h3>Distancias (m)</h3>`;
+//	let fragment = '';
+//	if(ring.checked) {
+//		for(let i = 0; i < Number(branchInput.value) + 1; i+=1){
+//			fragment += template(i + 1);
+//		}
+//	} else {
+//		for(let i = 0; i < branchInput.value; i+=1){
+//			fragment += template(i + 1);
+//		}			
+//	}
+//
+//	distanceSection.innerHTML += fragment;
+//
+//	generateBranchBoxes(); // 1
+//	generateNewLoadBox(); // 2
+//};
 
 function Branch(id, loads = 0, template){
 	this.id = id;
