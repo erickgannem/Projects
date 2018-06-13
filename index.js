@@ -1,6 +1,5 @@
 "use strict";
 window.addEventListener('DOMContentLoaded', function() {
-
  const addBranchesEl = document.querySelector('button#branch-submit');
  const branchInputEl = document.querySelector('input#branch-input');
  const distanceSectionEl = document.querySelector('div#distances');
@@ -10,14 +9,19 @@ window.addEventListener('DOMContentLoaded', function() {
  const calculateEl = document.querySelector('button.btn-calculate');
  const typeRadioEls = document.querySelectorAll('input.type-radio');
  const voltageRadioEls = document.querySelectorAll('input.voltage-radio');
- const addLoadEls = document.querySelectorAll('button.add-load');
  let selectedVoltageSource = null;
  let selectedSystemType = null; 
  
  // Functions
  function runApp() {
   console.log('Running...');
+  
+  const branchesQty = branchInputEl.value;
+  const branchesObj = generateBranchObjects(branchesQty);
+  
   renderDistanceBoxes(generateDistanceBoxes());
+  renderBranchBoxes(branchesObj);
+  generateNewLoadBox(branchesObj);
  }
  
  // Rendering into DOM
@@ -59,10 +63,10 @@ window.addEventListener('DOMContentLoaded', function() {
   const template = function(idx) {
    return `
     <div class="branch-item" data-branch=${idx}>
-     <div class="branch-header">i
+     <div class="branch-header">
       <h3>Rama ${idx}</h3>
       <button class="btn btn-manjaro add-load" data-load-button=${idx}>
-       <label class="add-load-label">+</label>
+       <label class="add-load-label" data-load-button=${idx}>+</label>
       </button>
      </div>
     </div>
@@ -85,26 +89,43 @@ window.addEventListener('DOMContentLoaded', function() {
   for(let i = 0; i < branchesToRender; i++) {
    fragment = fragment + branchesObj[`branch${i + 1}`]['template'];
   };
- 
+  
   branchSectionEl.innerHTML = fragment;
  };
  
  function generateNewLoadBox({branchesObj}){
- 	const template = function(id) {
+  const addLoadEls = document.querySelectorAll('button.add-load');
+  const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
      <label class="label-styling" for="l${id}">L${id}</label>
-     <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
+     <input type="number" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
     </div>
-   `
-   const addLoadOnClick = function(ev) {
-    branchesObj[`branch${addLoadEls.dataset.loadButton}`]['loads']++;
-   };
-   for(let i = 0, x = addLoadEls; i < x.length; i++) {
-    branchesObj[`branch${addLoadEls.dataset.loadButton}`].addEventListener('click', addLoadOnClick);
-   };
- 	};
+   `;
+  };
+  const addLoadOnClick = function(ev) {
+   const dataId = ev.target.dataset.loadButton;
+   if(!dataId) return; 
+   const branchTargets = document.querySelectorAll('div.branch-item');
+   const currentBranchEl = branchTargets[dataId - 1];
+   const branchObj = branchesObj[`branch${dataId}`];
+   branchObj['loads']++;
+   renderNewLoadBox(currentBranchEl, template, branchObj.loads);
+  };
+  
+  for(let i = 0, x = addLoadEls, branch; i < x.length; i++) {
+   addLoadEls[i].addEventListener('click', addLoadOnClick);
+  };
  };
+ // currently working
+ function renderNewLoadBox(target, template, loads) {
+  let fragment = '';
+  for(let i = 0; i < loads; i++) {
+   fragment += template(i + 1);
+  }
+  console.log(fragment)
+  target.innerHTML += fragment;
+ }
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {
