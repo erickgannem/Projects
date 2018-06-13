@@ -8,11 +8,11 @@ window.addEventListener('DOMContentLoaded', function() {
  const distanceBoxesEl = document.querySelector('div.distance-boxes');
  const branchSectionEl = document.querySelector('#branches-wrapper');
  const calculateEl = document.querySelector('button.btn-calculate');
- const ringOptionEl = document.querySelector('input#ring');
- const voltageRadioEl = document.querySelectorAll('input.voltage-radio');
+ const typeRadioEls = document.querySelectorAll('input.type-radio');
+ const voltageRadioEls = document.querySelectorAll('input.voltage-radio');
  const addLoadEls = document.querySelectorAll('button.add-load');
  let selectedVoltageSource = null;
- 
+ let selectedSystemType = null; 
  
  // Functions
  function runApp() {
@@ -105,7 +105,24 @@ window.addEventListener('DOMContentLoaded', function() {
    };
  	};
  };
+ // Handlers
+ function setSystemType(element, index) {
+  function systemTypeHandler(ev) {
+   selectedSystemType = element.dataset.type;
+  };
+  element.addEventListener('change', systemTypeHandler);
+ };
+
+ function setVoltageSource(element, index) {
+  function voltageSourceHandler(ev) {
+   selectedVoltageSource = element.dataset.voltage;
+  };
+  element.addEventListener('change', voltageSourceHandler);
+ };
+ // Event Listeners 
  addBranchesEl.addEventListener('click', runApp);
+ typeRadioEls.forEach(setSystemType);
+ voltageRadioEls.forEach(setVoltageSource);
 });
 // Declarations
 
