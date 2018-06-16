@@ -108,23 +108,22 @@ window.addEventListener('DOMContentLoaded', function() {
    if(!dataId) return; 
    const branchTargets = document.querySelectorAll('div.branch-item');
    const currentBranchEl = branchTargets[dataId - 1];
+   const currentBranchDataId = currentBranchEl.dataset.branch;
    const branchObj = branchesObj[`branch${dataId}`];
    branchObj['loads']++;
-   renderNewLoadBox(currentBranchEl, template, branchObj.loads);
+   renderNewLoadBox.call(this, currentBranchEl, template, branchObj.loads);
   };
-  
-  for(let i = 0, x = addLoadEls, branch; i < x.length; i++) {
-   addLoadEls[i].addEventListener('click', addLoadOnClick);
-  };
+  window.addEventListener('click', addLoadOnClick);
  };
- // currently working
+ // note to remember: reset loads counter when start app button is pressed.
+ // refactor: create an array of filled templates for every branch
  function renderNewLoadBox(target, template, loads) {
-  let fragment = '';
+  let templateToBeInserted, filledTemplates = []
   for(let i = 0; i < loads; i++) {
-   fragment += template(i + 1);
+   filledTemplates.push(template(i + 1))
   }
-  console.log(fragment)
-  target.innerHTML += fragment;
+  templateToBeInserted = filledTemplates[filledTemplates.length - 1];
+  target.innerHTML += templateToBeInserted;
  }
  // Handlers
  function setSystemType(element, index) {
