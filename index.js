@@ -13,7 +13,9 @@ window.addEventListener('DOMContentLoaded', function() {
  let selectedSystemType = null; 
  let branchInputElValue = null;
  let running = false; 
+ 
  // Functions
+ //
  function runApp() {
   const branchesQty = branchInputEl.value;
   const branchesObj = generateBranchObjects(branchesQty);
@@ -33,7 +35,7 @@ window.addEventListener('DOMContentLoaded', function() {
   console.log(infoMessage);
  };
  
- // Rendering into DOM
+ // UI/UX part starts here 
  function generateDistanceBoxes() {
   const template = function(idx) {
    return `
@@ -102,7 +104,7 @@ window.addEventListener('DOMContentLoaded', function() {
    return `
     <div class="load-wrapper" data-load=${id}>
      <label class="label-styling" for="l${id}">LOAD</label>
-     <input type="number" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
+     <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
     </div>
    `;
   };
@@ -118,16 +120,23 @@ window.addEventListener('DOMContentLoaded', function() {
   };
   window.addEventListener('click', addLoadOnClick);
  };
- // note to remember: reset loads counter when start app button is pressed.
- // refactor: create an array of filled templates for every branch
  function renderNewLoadBox(target, template, loads) {
-  let templateToBeInserted, filledTemplates = []
+  let templateToBeInserted, filledTemplates = [];
   for(let i = 0; i < loads; i++) {
    filledTemplates.push(template(i + 1))
-  }
+  };
   templateToBeInserted = filledTemplates[filledTemplates.length - 1];
   target.innerHTML += templateToBeInserted;
- }
+ };
+
+ // logical part starts here
+ function getLoadValues() { // This function must be called when pressing calculate button
+  const inputs = Array.from(document.querySelectorAll('input.load-input'));
+  const loads = inputs.map( (input) => input.value.split("*").reduce( (current, next) => current * next));
+  const totalLoad = loads.reduce( (current, next) => current + next);
+  return { loads, totalLoad };
+ };
+ 
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {
@@ -152,38 +161,6 @@ window.addEventListener('DOMContentLoaded', function() {
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);
 });
-// Logical part (getting values from fields)
-
-//function loadsHandler(){
-//	const branchContainer = document.querySelectorAll('.branch-item');
-//	let loads = [];
-//	let totalLoad = null;
-//	let load = 0;
-//
-//
-//	branchContainer.forEach( function (branch, i){
-//		Array.from(branch.children).forEach(function(loadWrapper, j) {
-//			if(loadWrapper.classList.contains('load-wrapper') ){
-//
-//				Array.from(loadWrapper.children).forEach(function(loadInput, k) {
-//					if(loadInput.classList.contains('load-input') ){
-//						load += eval(loadInput.value);
-//					}
-//				});
-//			}
-//
-//		});
-//		loads.push(Number(load));
-//		load = 0;
-//	});
-//
-//	totalLoad = loads.reduce(function(acc, next){
-//		return next + acc;
-//	}, 0);
-//
-//	return {loads, totalLoad};
-//}
-//
 //function distancesHandler(){
 //	const distanceInput = document.querySelectorAll('.distance-input');
 //	const distanceValues = [];
