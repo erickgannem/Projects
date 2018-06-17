@@ -11,18 +11,27 @@ window.addEventListener('DOMContentLoaded', function() {
  const voltageRadioEls = document.querySelectorAll('input.voltage-radio');
  let selectedVoltageSource = null;
  let selectedSystemType = null; 
- 
+ let branchInputElValue = null;
+ let running = false; 
  // Functions
  function runApp() {
-  console.log('Running...');
-  
   const branchesQty = branchInputEl.value;
   const branchesObj = generateBranchObjects(branchesQty);
-  
+  const infoMessage = `Running app with: ${"\n"} System Type: ${selectedSystemType} ${"\n"} Voltage Level: ${selectedVoltageSource} Volts ${"\n"} Branches: ${branchInputElValue}`; 
+
+  if (running) { alert('Por favor, recarga la página para volver a iniciar la aplicación'); return };
+  if (!selectedVoltageSource && !selectedSystemType) { alert('Por favor, selecciona voltage de entrada y tipo de sistema de distribución'); return; };
+  if (!selectedVoltageSource) { alert('Por favor, selecciona voltaje de entrada'); return; };
+  if (!selectedSystemType) { alert('Por favor, selecciona tipo de sistema de distribución'); return; };
+  if (!branchInputElValue) { alert('Por favor, ingresa un número de ramas');  return; };
+
   renderDistanceBoxes(generateDistanceBoxes());
   renderBranchBoxes(branchesObj);
   generateNewLoadBox(branchesObj);
- }
+
+  running = true;
+  console.log(infoMessage);
+ };
  
  // Rendering into DOM
  function generateDistanceBoxes() {
@@ -38,24 +47,18 @@ window.addEventListener('DOMContentLoaded', function() {
  };
 
  function renderDistanceBoxes({template}) {
-  const hasValue = branchInputEl.value;
-  if(hasValue) {
-   let fragment = '';
-   let boxesToRender = parseInt(hasValue, 10);
-   if (ring.checked) { // Ring systems needs an extra distance field.
-    for(let i = 0; i < boxesToRender + 1; i++) {
-     fragment = fragment + template(i + 1);
-    };
-   } else { // Radial systems needs same distance fields as loads.
-    for(let i = 0; i < boxesToRender; i++) {
-     fragment = fragment + template(i + 1);
-    };
+  let fragment = '';
+  let boxesToRender = parseInt(branchInputElValue, 10);
+  if (ring.checked) { // Ring systems needs an extra distance field.
+   for(let i = 0; i < boxesToRender + 1; i++) {
+    fragment = fragment + template(i + 1);
    };
-   distanceBoxesEl.innerHTML = fragment;
-  } else {
-   alert('Por favor, llena el campo de N de Ramas');
-   return;
+  } else { // Radial systems needs same distance fields as loads.
+   for(let i = 0; i < boxesToRender; i++) {
+    fragment = fragment + template(i + 1);
+   };
   };
+  distanceBoxesEl.innerHTML = fragment;
  };
  
  function generateBranchObjects(qty){
@@ -98,7 +101,7 @@ window.addEventListener('DOMContentLoaded', function() {
   const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
-     <label class="label-styling" for="l${id}">L${id}</label>
+     <label class="label-styling" for="l${id}">LOAD</label>
      <input type="number" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
     </div>
    `;
@@ -111,7 +114,7 @@ window.addEventListener('DOMContentLoaded', function() {
    const currentBranchDataId = currentBranchEl.dataset.branch;
    const branchObj = branchesObj[`branch${dataId}`];
    branchObj['loads']++;
-   renderNewLoadBox.call(this, currentBranchEl, template, branchObj.loads);
+   renderNewLoadBox(currentBranchEl, template, branchObj.loads);
   };
   window.addEventListener('click', addLoadOnClick);
  };
@@ -139,28 +142,16 @@ window.addEventListener('DOMContentLoaded', function() {
   };
   element.addEventListener('change', voltageSourceHandler);
  };
+
+ function grabBranchValue() {
+  branchInputElValue = branchInputEl.value;
+ }
  // Event Listeners 
  addBranchesEl.addEventListener('click', runApp);
+ branchInputEl.addEventListener('change', grabBranchValue);
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);
 });
-// Declarations
-
-//	newLoadBtn.forEach(function(btn, idx){
-//		const btnGp = btn.parentNode.parentNode;
-//		let fragment = null;
-//		btnGp.addEventListener('click', function(ev){
-//			if(ev.target.classList.contains('add-load') || ev.target.classList.contains('add-load-label')){
-//				branches[idx].addLoad();
-//				for(let i = 0; i < branches[idx].loads; i += 1){
-//					fragment = template(i + 1);
-//				}
-//				btnGp.innerHTML += fragment;
-//			}
-//		}, false);
-//	});
-//}
-
 // Logical part (getting values from fields)
 
 //function loadsHandler(){
