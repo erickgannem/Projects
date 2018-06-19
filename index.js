@@ -35,6 +35,13 @@ window.addEventListener('DOMContentLoaded', function() {
   console.log(infoMessage);
  };
  
+ function calculate() {
+  if (!running) return;
+  const { distances } = getDistanceValues();
+  const { loads } = getLoadValues();
+  getKvaL(loads, distances);
+ }
+ 
  // UI/UX part starts here 
  function generateDistanceBoxes() {
   const template = function(idx) {
@@ -132,11 +139,32 @@ window.addEventListener('DOMContentLoaded', function() {
  // logical part starts here
  function getLoadValues() { // This function must be called when pressing calculate button
   const inputs = Array.from(document.querySelectorAll('input.load-input'));
-  const loads = inputs.map( (input) => input.value.split("*").reduce( (current, next) => current * next));
+  const loads = inputs.map( input => input.value.split("*").reduce( (current, next) => current * next)).map(load => parseInt(load, 10));
   const totalLoad = loads.reduce( (current, next) => current + next);
   return { loads, totalLoad };
  };
  
+ function getDistanceValues() {
+  const inputs = Array.from(document.querySelectorAll('input.distance-input'));
+  const distances = inputs.map( (input) => parseInt(input.value) );
+  const totalDistance = distances.reduce( (current, next) => current + next);
+  return { distances, totalDistance };
+ };
+
+ function getKvaL(loads, distances) {
+  const kvaL = (function() {
+   let total = 0, i = 0;
+   const operation = 
+   loads.map(load => {
+    total += distances[i];
+    i++;
+    return load * total;
+   })
+   .reduce( (current, next) => current + next);
+   return operation;
+  })();
+  return kvaL;
+ };
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {
@@ -156,22 +184,11 @@ window.addEventListener('DOMContentLoaded', function() {
   branchInputElValue = branchInputEl.value;
  }
  // Event Listeners 
- addBranchesEl.addEventListener('click', runApp);
+ window.addEventListener('click', (ev) => ev.target == addBranchesEl ? runApp() : ev.target === calculateEl ? calculate() : 0);
  branchInputEl.addEventListener('change', grabBranchValue);
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);
 });
-//function distancesHandler(){
-//	const distanceInput = document.querySelectorAll('.distance-input');
-//	const distanceValues = [];
-//
-//	distanceInput.forEach( input => distanceValues.push(Number(input.value)));
-//	const totalDistance = Array.from(distanceInput).reduce(function(acc, next){
-//		return Number(next.value) + acc;
-//	}, 0);
-//	return {totalDistance, distanceValues};
-//};
-//
 //function renderResultsBox(cooperGauge, aluminiumGauge){
 //  const target = document.querySelector('.left-panel');
 //  const fragment = new DocumentFragment();
