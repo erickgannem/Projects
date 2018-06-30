@@ -37,10 +37,11 @@ window.addEventListener('DOMContentLoaded', function() {
  
  function calculate() {
   if (!running) return;
-  const { distances } = getDistanceValues();
+  const { distances, totalDistance } = getDistanceValues();
   const { loads } = getLoadValues();
-  getKvaL(loads, distances);
- }
+  const { kvaL } = getKvaL({loads, distances});
+  const { kva2 } = getKva2({kvaL, totalDistance});
+ };
  
  // UI/UX part starts here 
  function generateDistanceBoxes() {
@@ -146,24 +147,30 @@ window.addEventListener('DOMContentLoaded', function() {
  
  function getDistanceValues() {
   const inputs = Array.from(document.querySelectorAll('input.distance-input'));
-  const distances = inputs.map( (input) => parseInt(input.value) );
-  const totalDistance = distances.reduce( (current, next) => current + next);
+  const distances = inputs.map( function(input) {return parseInt(input.value)} );
+  const totalDistance = distances.reduce( function(current, next) {return current + next} );
   return { distances, totalDistance };
  };
 
- function getKvaL(loads, distances) {
+ function getKvaL({loads, distances}) {
   const kvaL = (function() {
    let total = 0, i = 0;
    const operation = 
-   loads.map(load => {
+   loads.map(function(load) {
     total += distances[i];
     i++;
     return load * total;
    })
-   .reduce( (current, next) => current + next);
+   .reduce(function(current, next) {
+    return current + next;
+   });
    return operation;
   })();
-  return kvaL;
+  return { kvaL };
+ };
+ function getKva2({kvaL, totalDistance}) {
+  const kva2 = (kvaL / totalDistance);
+  return { kva2 };
  };
  // Handlers
  function setSystemType(element, index) {
@@ -184,7 +191,10 @@ window.addEventListener('DOMContentLoaded', function() {
   branchInputElValue = branchInputEl.value;
  }
  // Event Listeners 
- window.addEventListener('click', (ev) => ev.target == addBranchesEl ? runApp() : ev.target === calculateEl ? calculate() : 0);
+ window.addEventListener('click', function(ev) {
+  if (ev.target == addBranchesEl) { runApp() };
+  if (ev.target == calculateEl) { calculate() };
+ });
  branchInputEl.addEventListener('change', grabBranchValue);
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);

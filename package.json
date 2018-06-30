@@ -1,0 +1,26 @@
+{
+  "name": "gauge-calculator",
+  "version": "1.0.0",
+  "description": "web utility to find the conductor gauge required by a distribution power system.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erickgannem/gauge-calculator.git"
+  },
+  "keywords": [
+    "web",
+    "app",
+    "gauge",
+    "electrical",
+    "engineering"
+  ],
+  "author": "Erick Gannem",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erickgannem/gauge-calculator/issues"
+  },
+  "homepage": "https://github.com/erickgannem/gauge-calculator#readme"
+}
