@@ -15,24 +15,26 @@ window.addEventListener('DOMContentLoaded', function() {
  let running = false; 
  
  // Functions
- //
  function runApp() {
   const branchesQty = branchInputEl.value;
   const branchesObj = generateBranchObjects(branchesQty);
-  const infoMessage = `Running app with: ${"\n"} System Type: ${selectedSystemType} ${"\n"} Voltage Level: ${selectedVoltageSource} Volts ${"\n"} Branches: ${branchInputElValue}`; 
-
-  if (running) { alert('Por favor, recarga la página para volver a iniciar la aplicación'); return };
-  if (!selectedVoltageSource && !selectedSystemType) { alert('Por favor, selecciona voltage de entrada y tipo de sistema de distribución'); return; };
-  if (!selectedVoltageSource) { alert('Por favor, selecciona voltaje de entrada'); return; };
-  if (!selectedSystemType) { alert('Por favor, selecciona tipo de sistema de distribución'); return; };
-  if (!branchInputElValue) { alert('Por favor, ingresa un número de ramas');  return; };
+  const infoMessage = {
+   'Selected System Type': selectedSystemType,
+   'Voltage Level': selectedVoltageSource,
+   'Branches': branchInputElValue
+  };
+  if (running) { alert('Please, reload the page in order to refresh the application'); return };
+  if (!selectedVoltageSource && !selectedSystemType) { alert('Please check a voltage level and a distribution system type'); return; };
+  if (!selectedVoltageSource) { alert('Please, check a voltage level'); return; };
+  if (!selectedSystemType) { alert('Please, check a distribution system type'); return; };
+  if (!branchInputElValue) { alert('Please, fill in the branches input');  return; };
 
   renderDistanceBoxes(generateDistanceBoxes());
   renderBranchBoxes(branchesObj);
   generateNewLoadBox(branchesObj);
 
   running = true;
-  console.log(infoMessage);
+  console.table(infoMessage);
  };
  
  function calculate() {
@@ -41,6 +43,18 @@ window.addEventListener('DOMContentLoaded', function() {
   const { loads } = getLoadValues();
   const { kvaL } = getKvaL({loads, distances});
   const { kva2 } = getKva2({kvaL, totalDistance});
+  const { powerSuppliedByG1, powerSuppliedByG2 } = getHalfPoint({kva2, loads});
+
+  const infoMessage = {
+   'Total Distance (m)': totalDistance,
+   'KVA * L (KVA / m)': kvaL,
+   'KVA II (KVA)': kva2,
+   'Power Supplied by Generator I (KVA)': powerSuppliedByG1,
+   'Power Supplied by Generator II (KVA)': powerSuppliedByG2
+  };
+  console.table(infoMessage);
+
+
  };
  
  // UI/UX part starts here 
@@ -138,7 +152,7 @@ window.addEventListener('DOMContentLoaded', function() {
  };
 
  // logical part starts here
- function getLoadValues() { // This function must be called when pressing calculate button
+ function getLoadValues() { 
   const inputs = Array.from(document.querySelectorAll('input.load-input'));
   const loads = inputs.map( input => input.value.split("*").reduce( (current, next) => current * next)).map(load => parseInt(load, 10));
   const totalLoad = loads.reduce( (current, next) => current + next);
@@ -168,10 +182,31 @@ window.addEventListener('DOMContentLoaded', function() {
   })();
   return { kvaL };
  };
+
  function getKva2({kvaL, totalDistance}) {
   const kva2 = (kvaL / totalDistance);
   return { kva2 };
  };
+
+ function getHalfPoint({kva2, loads}) {
+  var halfPointLoads = [],
+      powerSuppliedByG1 = 0, 
+      powerSuppliedByG2 = 0; 
+  Array.prototype.reduceRight.call(loads, function(current, next, index, array) {
+   if (current > kva2) {
+   powerSuppliedByG1 = Math.abs(kva2 - current);
+   return;
+   };
+   if (current <= kva2) {
+    halfPointLoads.push(array[index]);
+   };
+   return current + next;
+  }, 0);
+  halfPointLoads = halfPointLoads.reverse();
+  powerSuppliedByG2 = Math.abs(halfPointLoads[0] - powerSuppliedByG1);
+  return { halfPointLoads, powerSuppliedByG1, powerSuppliedByG2 };
+ };
+ 
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {
