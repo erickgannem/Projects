@@ -125,8 +125,8 @@ window.addEventListener('DOMContentLoaded', function() {
   const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
-     <label class="label-styling" for="l${id}">LOAD</label>
      <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
+     <label class="label-styling" for="l${id}"><b>KVA</b></label>
     </div>
    `;
   };
@@ -206,7 +206,15 @@ window.addEventListener('DOMContentLoaded', function() {
   powerSuppliedByG2 = Math.abs(halfPointLoads[0] - powerSuppliedByG1);
   return { halfPointLoads, powerSuppliedByG1, powerSuppliedByG2 };
  };
- 
+
+ function getCooperGauge() {
+
+ };
+
+ function getAluminiumGauge() {
+
+ };
+
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {

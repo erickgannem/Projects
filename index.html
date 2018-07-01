@@ -12,23 +12,23 @@
    <div class="panel-section info">
     <img src="./assets/logo.png" alt="logo_udo">
     <div class="paragraph-container">
-     <h4>Cálculo del Conductor Requerido para Sistemas de Distribución Radial o en Anillo</h4>
+     <h4>Required driver for a Radial/Ring Power Distribution System</h4>
      <span>
-      Asignatura: <b>Distribución I</b>
+      Subject: <b>Distribución I</b>
       <br>
-      Profesor: <b>Simón Ramírez</b>
+      Teacher: <b>Simón Ramírez</b>
       <br>
-      Por: <b>Erick Gannem, Estefany Acuña</b>
+      Designed and Developed by: <b>Erick Gannem</b>
      </span>
     </div>
    </div>
    <div class="inner-wrapper">
     <div class="left-panel">
      <div class="panel-section system-type">
-      <h3>Tipo</h3>
+      <h3>Type</h3>
       <div class="type-wrapper">
           <input type="radio" name="type" class="ring type-radio" id="ring" data-type="ring">
-          <label for="ring">Anillo</label>
+          <label for="ring">Ring</label>
       </div>
       <div class="type-wrapper">
           <input type="radio" name="type" class="radial type-radio" id="radial" data-type="radial">
@@ -36,7 +36,7 @@
       </div>
      </div>
      <div class="panel-section voltage-source">
-      <h3>Voltaje (v)</h3>
+      <h3>Voltage Level (v)</h3>
       <div class="voltage-source-item">
        <div class="voltage-wrapper" id="voltage1">
         <input type="radio" name="v" class="voltage-radio" id="v1" data-voltage="2400">
@@ -53,21 +53,21 @@
       </div>
      </div>
      <div class="panel-section branch-request">
-      <h3>N° de Ramas</h3>
+      <h3>Branches</h3>
       <input type="number" name="branch-input" class="branch-input text-box" id="branch-input">
-      <button name="branch-submit" class="btn btn-manjaro branch-submit" id="branch-submit"> Agregar </button>
+      <button name="branch-submit" class="btn btn-manjaro branch-submit" id="branch-submit">ADD</button>
      </div>
 
      <div class="panel-section distances" id="distances">
-      <h3>Distancias (m)</h3>
-      <h4>Ingrese el numero de ramales y presione 'Agregar' para generar campos.</h4>
+      <h3>Distances (m)</h3>
+      <h4>Please, fill in a number of branches and press the 'Add' button to generate these fields.</h4>
       <div class="distance-boxes"></div>
      </div>
-     <button class="btn btn-calculate">Calcular</button>
+     <button class="btn btn-calculate">CALCULATE</button>
     </div>
     <div class="right-panel">
      <div class="panel-section branches-wrapper" id="branches-wrapper">
-      <h4>Ingrese el numero de ramales y presione 'Agregar' para generar campos.</h4>
+      <h4>Please, fill in a number of branches and press the 'Add' button to generate these fields.</h4>
      </div>
     </div>
    </div>

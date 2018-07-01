@@ -47,9 +47,10 @@ function getKva2({kvaL, totalDistance}) {
  const kva2 = (kvaL / totalDistance);
  return { kva2 };
 };
-
-function getHalfPoint({kva2, loads}) {
+// need to make an array with distances according to loads to get KVA * L Halfpoint
+function getHalfPoint({kva2, loads, distances}) {
  var halfPointLoads = [],
+     halfPointDistances = [],
      powerSuppliedByG1 = 0, 
      powerSuppliedByG2 = 0; 
  Array.prototype.reduceRight.call(loads, function(current, next, index, array) {
@@ -66,3 +67,7 @@ function getHalfPoint({kva2, loads}) {
  powerSuppliedByG2 = Math.abs(halfPointLoads[0] - powerSuppliedByG1);
  return { halfPointLoads, powerSuppliedByG1, powerSuppliedByG2 };
 };
+// this function is intended to get the kva*l for half point. Needed to calculate the required lead gauge.
+function getKvaL_halfPoint({halfPointLoads, halfPointDistances}) {
+
+}
