@@ -49,6 +49,7 @@ window.addEventListener('DOMContentLoaded', function() {
           halfPointDistances_fromLeft 
         } = getHalfPoint( {kva2, loads, distances} );
   const kvaL_halfPoint = getKvaL_halfPoint( {halfPointLoads_fromLeft, halfPointDistances_fromLeft} );
+  const { forCopper, forAluminium } = getGauges(gauges, kvaL_halfPoint, selectedVoltageSource);
 
   const infoMessage = {
    'Total Distance (m)': totalDistance,
@@ -190,48 +191,66 @@ window.addEventListener('DOMContentLoaded', function() {
   return (kvaL / totalDistance);
  };
 
-  function getHalfPoint({kva2, loads, distances}) {
-   var halfPointLoads = [],
-       halfPointLoads_fromLeft = [...loads],
-       halfPointDistances_fromLeft = [...distances],
-       powerSuppliedByG1 = 0, 
-       powerSuppliedByG2 = 0; 
+ function getHalfPoint({kva2, loads, distances}) {
+  var halfPointLoads = [],
+      halfPointLoads_fromLeft = [...loads],
+      halfPointDistances_fromLeft = [...distances],
+      powerSuppliedByG1 = 0, 
+      powerSuppliedByG2 = 0; 
 
-   Array.prototype.reduceRight.call(loads, function(current, next, index, array) {
-    if (current > kva2) {
-    powerSuppliedByG1 = Math.abs(kva2 - current);
-    halfPointLoads_fromLeft.push(powerSuppliedByG1);
-    return;
-    };
-    if (current <= kva2) {
-     halfPointLoads.push(array[index]);
-     halfPointDistances_fromLeft.pop();
-     halfPointLoads_fromLeft.pop();
-    };
-    return current + next;
-   }, 0);
-   halfPointLoads = halfPointLoads.reverse();
-   powerSuppliedByG2 = Math.abs(halfPointLoads[0] - powerSuppliedByG1);
+  Array.prototype.reduceRight.call(loads, function(current, next, index, array) {
+   if (current > kva2) {
+   powerSuppliedByG1 = Math.abs(kva2 - current);
+   halfPointLoads_fromLeft.push(powerSuppliedByG1);
+   return;
+   };
+   if (current <= kva2) {
+    halfPointLoads.push(array[index]);
+    halfPointDistances_fromLeft.pop();
+    halfPointLoads_fromLeft.pop();
+   };
+   return current + next;
+  }, 0);
+  halfPointLoads = halfPointLoads.reverse();
+  powerSuppliedByG2 = Math.abs(halfPointLoads[0] - powerSuppliedByG1);
 
-   return { halfPointLoads_fromLeft, halfPointDistances_fromLeft, powerSuppliedByG1, powerSuppliedByG2 };
+  return { halfPointLoads_fromLeft, halfPointDistances_fromLeft, powerSuppliedByG1, powerSuppliedByG2 };
+ };
+
+ function getKvaL_halfPoint({halfPointLoads_fromLeft, halfPointDistances_fromLeft}) {
+   return getKvaL({
+       loads: halfPointLoads_fromLeft, 
+       distances: halfPointDistances_fromLeft
+     });
+ }
+ 
+ function getGauges(gauges, kvaL_halfPoint, selectedVoltageSource) {
+  var copper = gauges.copper;
+  var aluminium = gauges.aluminium;
+  var determineGauges = function(materialName, materialObj) {
+   for (let gauge in materialObj) {
+    for (let voltage in materialObj[gauge]) {
+     if (selectedVoltageSource == voltage) {
+      let vpercent = ( (kvaL_halfPoint * Math.pow(10, -3)) * materialObj[gauge][voltage] );
+      if (vpercent < 1) {
+       return {
+        'material': materialName,
+        'voltage': parseInt(voltage, 10),
+        'factor': materialObj[gauge][voltage],
+        'vpercent': vpercent,
+        'gauge': gauge
+       };
+      };
+     };
+    };
+   };
   };
-
-  function getKvaL_halfPoint({halfPointLoads_fromLeft, halfPointDistances_fromLeft}) {
-    return getKvaL(
-      {
-        loads: halfPointLoads_fromLeft, 
-        distances: halfPointDistances_fromLeft
-      }
-    );
-  }
- function getCooperGauge() {
-
+  return {
+   forCopper: determineGauges('copper', copper),
+   forAluminium: determineGauges('aluminium', aluminium)
+  };
  };
-
- function getAluminiumGauge() {
-
- };
-
+ 
  // Handlers
  function setSystemType(element, index) {
   function systemTypeHandler(ev) {
@@ -250,6 +269,7 @@ window.addEventListener('DOMContentLoaded', function() {
  function grabBranchValue() {
   branchInputElValue = branchInputEl.value;
  }
+
  // Event Listeners 
  window.addEventListener('click', function(ev) {
   if (ev.target == addBranchesEl) { runApp() };
