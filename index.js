@@ -139,9 +139,9 @@ window.addEventListener('DOMContentLoaded', function() {
  };
  
  function renderBranchBoxes({branchesObj}) {
-  let fragment = '';
-  branchSectionEl.innerHTML = null;
+  let fragment = '<button class="btn btn-manjaro" style="flex-basis:100%;" data-load-button="perBranch">+1 PER BRANCH</button>';
   const branchesToRender = Object.keys(branchesObj).length;
+  branchSectionEl.innerHTML = null;
   
   for(let i = 0; i < branchesToRender; i++) {
    fragment = fragment + branchesObj[`branch${i + 1}`]['template'];
@@ -149,9 +149,10 @@ window.addEventListener('DOMContentLoaded', function() {
   
   branchSectionEl.innerHTML = fragment;
  };
- 
+
  function generateNewLoadBox({branchesObj}){
   const addLoadEls = document.querySelectorAll('button.add-load');
+  const branchTargets = document.querySelectorAll('div.branch-item');
   const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
@@ -160,17 +161,32 @@ window.addEventListener('DOMContentLoaded', function() {
     </div>
    `;
   };
+  const addLoadPerBranchOnClick = function(ev) {
+   for (let i = 0, current, loads; i < branchTargets.length; i++) {
+    current = branchesObj[`branch${i + 1}`];
+    current.loads++
+    renderNewLoadBox(branchTargets[i], template, current.loads)
+   }
+  }
   const addLoadOnClick = function(ev) {
    const dataId = ev.target.dataset.loadButton;
-   if(!dataId) return; 
-   const branchTargets = document.querySelectorAll('div.branch-item');
    const currentBranchEl = branchTargets[dataId - 1];
    const currentBranchDataId = currentBranchEl.dataset.branch;
    const branchObj = branchesObj[`branch${dataId}`];
    branchObj['loads']++;
    renderNewLoadBox(currentBranchEl, template, branchObj.loads);
   };
-  window.addEventListener('click', addLoadOnClick);
+  function addLoadEventHandler(ev) {
+   const dataId = ev.target.dataset.loadButton;
+   (dataId) 
+    ? (dataId !== 'perBranch')  
+    ? addLoadOnClick(ev) 
+    : (dataId == 'perBranch') 
+    ? addLoadPerBranchOnClick(ev)
+    : 0
+    : 0;
+  };
+  window.addEventListener('click', addLoadEventHandler);
  };
  function renderNewLoadBox(target, template, loads) {
   let templateToBeInserted, filledTemplates = [];
