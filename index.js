@@ -34,31 +34,57 @@ window.addEventListener('DOMContentLoaded', function() {
   generateNewLoadBox(branchesObj);
 
   running = true;
-  console.table(infoMessage);
+  console.log(infoMessage);
  };
  
  function calculate() {
   if (!running) return;
+  // Common tasks for ring and radial
   const { distances, totalDistance } = getDistanceValues();
   const { loads } = getLoadValues();
   const kvaL = getKvaL( {loads, distances} );
-  const kva2 = getKva2( {kvaL, totalDistance} );
-  const { powerSuppliedByG1, 
-          powerSuppliedByG2, 
-          halfPointLoads_fromLeft, 
-          halfPointDistances_fromLeft 
-        } = getHalfPoint( {kva2, loads, distances} );
-  const kvaL_halfPoint = getKvaL_halfPoint( {halfPointLoads_fromLeft, halfPointDistances_fromLeft} );
-  const { forCopper, forAluminium } = getGauges(gauges, kvaL_halfPoint, selectedVoltageSource);
 
-  const infoMessage = {
-   'Total Distance (m)': totalDistance,
-   'KVA * L (KVA / m)': kvaL,
-   'KVA II (KVA)': kva2,
-   'Power Supplied by Generator I (KVA)': powerSuppliedByG1,
-   'Power Supplied by Generator II (KVA)': powerSuppliedByG2
+  if (selectedSystemType == 'ring') {
+   forRing({ selectedVoltageSource, gauges, kvaL, loads, distances, totalDistance });
   };
-  console.table(infoMessage);
+  if (selectedSystemType == 'radial') {
+   forRadial({ selectedVoltageSource, gauges, kvaL, totalDistance });
+  };
+
+  function forRing({ selectedVoltageSource, gauges, kvaL, loads, distances, totalDistance }) {
+   const kva2 = getKva2( {kvaL, totalDistance} );
+   const { powerSuppliedByG1, 
+           powerSuppliedByG2, 
+           halfPointLoads_fromLeft, 
+           halfPointDistances_fromLeft 
+         } = getHalfPoint( {kva2, loads, distances} );
+   const kvaL_halfPoint = getKvaL_halfPoint( {halfPointLoads_fromLeft, halfPointDistances_fromLeft} );
+   const { forCopper, forAluminium } = getGauges({ gauges, kvaL_needed: kvaL_halfPoint, selectedVoltageSource });
+   const infoMessage = {
+    'Total Distance (m)': totalDistance,
+    'KVA * L (KVA / m)': kvaL,
+    'KVA II (KVA)': kva2,
+    'Supplied by Generator I (KVA)': powerSuppliedByG1,
+    'Supplied by Generator II (KVA)': powerSuppliedByG2,
+    'Recommended Gauges': {
+     'Copper': forCopper,
+     'Aluminium': forAluminium
+    }
+   };
+   console.log(infoMessage);
+  };
+  function forRadial({ selectedVoltageSource, gauges, kvaL, totalDistance }) {
+   const { forCopper, forAluminium } = getGauges({ gauges, kvaL_needed: kvaL, selectedVoltageSource });
+   const infoMessage = {
+    'Total Distance (m)': totalDistance,
+    'KVA * L (KVA / m)': kvaL,
+    'Recommended Gauges': {
+     'Copper': forCopper,
+     'Aluminium': forAluminium
+    }
+   };
+   console.log(infoMessage);
+  };
  };
  
  // UI/UX part starts here 
@@ -95,7 +121,7 @@ window.addEventListener('DOMContentLoaded', function() {
    return `
     <div class="branch-item" data-branch=${idx}>
      <div class="branch-header">
-      <h3>Rama ${idx}</h3>
+      <h3>Branch ${idx}</h3>
       <button class="btn btn-manjaro add-load" data-load-button=${idx}>
        <label class="add-load-label" data-load-button=${idx}>+</label>
       </button>
@@ -224,21 +250,23 @@ window.addEventListener('DOMContentLoaded', function() {
      });
  }
  
- function getGauges(gauges, kvaL_halfPoint, selectedVoltageSource) {
+ // For ring systems: kvaL_halfPoint
+ // For radial systems: kvaL
+ function getGauges({ gauges, kvaL_needed, selectedVoltageSource }) {
   var copper = gauges.copper;
   var aluminium = gauges.aluminium;
   var determineGauges = function(materialName, materialObj) {
    for (let gauge in materialObj) {
     for (let voltage in materialObj[gauge]) {
      if (selectedVoltageSource == voltage) {
-      let vpercent = ( (kvaL_halfPoint * Math.pow(10, -3)) * materialObj[gauge][voltage] );
+      let vpercent = ( (kvaL_needed * Math.pow(10, -3)) * materialObj[gauge][voltage] );
       if (vpercent < 1) {
        return {
-        'material': materialName,
-        'voltage': parseInt(voltage, 10),
-        'factor': materialObj[gauge][voltage],
-        'vpercent': vpercent,
-        'gauge': gauge
+        material: materialName,
+        voltage: parseInt(voltage, 10),
+        factor: materialObj[gauge][voltage],
+        vpercent: vpercent,
+        gauge: gauge
        };
       };
      };
