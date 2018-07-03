@@ -9,6 +9,7 @@ window.addEventListener('DOMContentLoaded', function() {
  const calculateEl = document.querySelector('button.btn-calculate');
  const typeRadioEls = document.querySelectorAll('input.type-radio');
  const voltageRadioEls = document.querySelectorAll('input.voltage-radio');
+ const leftSectionEl = document.querySelector('div.left-panel');
  let selectedVoltageSource = null;
  let selectedSystemType = null; 
  let branchInputElValue = null;
@@ -50,7 +51,6 @@ window.addEventListener('DOMContentLoaded', function() {
   if (selectedSystemType == 'radial') {
    forRadial({ selectedVoltageSource, gauges, kvaL, totalDistance });
   };
-
   function forRing({ selectedVoltageSource, gauges, kvaL, loads, distances, totalDistance }) {
    const kva2 = getKva2( {kvaL, totalDistance} );
    const { powerSuppliedByG1, 
@@ -72,6 +72,7 @@ window.addEventListener('DOMContentLoaded', function() {
     }
    };
    console.log(infoMessage);
+   renderResultsBox({ forCopper, forAluminium });
   };
   function forRadial({ selectedVoltageSource, gauges, kvaL, totalDistance }) {
    const { forCopper, forAluminium } = getGauges({ gauges, kvaL_needed: kvaL, selectedVoltageSource });
@@ -84,6 +85,7 @@ window.addEventListener('DOMContentLoaded', function() {
     }
    };
    console.log(infoMessage);
+   renderResultsBox({ forCopper, forAluminium });
   };
  };
  
@@ -130,7 +132,7 @@ window.addEventListener('DOMContentLoaded', function() {
    `;
   };
   for(let i = 0; i < qty; i++) {
-   branchesObj[`branch${i + 1}`] = {};
+   branchesObj[`branch${i + 1}`] = Object.create({});
    branchesObj[`branch${i + 1}`]['id'] = i + 1;
    branchesObj[`branch${i + 1}`]['loads']  = 0;
    branchesObj[`branch${i + 1}`]['template'] = template(i + 1);
@@ -197,6 +199,23 @@ window.addEventListener('DOMContentLoaded', function() {
   target.innerHTML += templateToBeInserted;
  };
 
+ function renderResultsBox({ forCopper, forAluminium }) {
+  const fragment = `
+   <div class="panel-section results">
+    <h3>Required Driver: </h3>
+    <div class="gauges-box">
+     <h4 class="material-styling copper-styling">
+      COPPER: ${ forCopper.gauge.replace('N', '#') }
+     </h4>
+     <h4 class="material-styling aluminium-styling">
+      ALUMINIUM: ${ forAluminium.gauge.replace('N', '#') }
+     </h4>
+     <p>For more information about other parameters, press F12</p>
+    </div>
+   </div>
+  `;
+  leftSectionEl.innerHTML += fragment;
+ }
  // logical part starts here
  function getLoadValues() { 
   const inputs = Array.from(document.querySelectorAll('input.load-input'));
