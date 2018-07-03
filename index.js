@@ -202,7 +202,7 @@ window.addEventListener('DOMContentLoaded', function() {
  function renderResultsBox({ forCopper, forAluminium }) {
   const fragment = `
    <div class="panel-section results">
-    <h3>Required Driver: </h3>
+    <h3>Required Lead: </h3>
     <div class="gauges-box">
      <h4 class="material-styling copper-styling">
       COPPER: ${ forCopper.gauge.replace('N', '#') }
