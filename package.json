@@ -1,7 +1,7 @@
 {
   "name": "gauge-calculator",
   "version": "1.0.0",
-  "description": "web utility to find the conductor gauge required by a distribution power system.",
+  "description": "web utility to find the required wire gauge needed by a radial/ring distribution power system.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
