@@ -158,7 +158,7 @@ window.addEventListener('DOMContentLoaded', function() {
   const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
-     <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="Ej: 3*25">
+     <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="E.g 3*25">
      <label class="label-styling" for="l${id}"><b>KVA</b></label>
     </div>
    `;
