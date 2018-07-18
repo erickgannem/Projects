@@ -29,13 +29,18 @@ window.addEventListener('DOMContentLoaded', function() {
   if (!selectedVoltageSource) { alert('Please, check a voltage level'); return; };
   if (!selectedSystemType) { alert('Please, check a distribution system type'); return; };
   if (!branchInputElValue) { alert('Please, fill in the branches input');  return; };
-
+  
   renderDistanceBoxes(generateDistanceBoxes());
   renderBranchBoxes(branchesObj);
   generateNewLoadBox(branchesObj);
 
   running = true;
   console.log(infoMessage);
+
+  // Event Listeners used once the app is started.
+  window.addEventListener('click', function(ev) {
+   deleteLoadHandler(ev, branchesObj)
+  });
  };
  
  function calculate() {
@@ -137,10 +142,10 @@ window.addEventListener('DOMContentLoaded', function() {
    branchesObj[`branch${i + 1}`]['loads']  = 0;
    branchesObj[`branch${i + 1}`]['template'] = template(i + 1);
   };
-  return { branchesObj };
+  return branchesObj;
  };
  
- function renderBranchBoxes({branchesObj}) {
+ function renderBranchBoxes(branchesObj) {
   let fragment = '<button class="btn btn-manjaro" style="flex-basis:100%;" data-load-button="perBranch">+1 PER BRANCH</button>';
   const branchesToRender = Object.keys(branchesObj).length;
   branchSectionEl.innerHTML = null;
@@ -152,7 +157,7 @@ window.addEventListener('DOMContentLoaded', function() {
   branchSectionEl.innerHTML = fragment;
  };
 
- function generateNewLoadBox({branchesObj}){
+ function generateNewLoadBox(branchesObj){
   const addLoadEls = document.querySelectorAll('button.add-load');
   const branchTargets = document.querySelectorAll('div.branch-item');
   const template = function(id) {
@@ -336,17 +341,17 @@ window.addEventListener('DOMContentLoaded', function() {
   if (ev.target == addBranchesEl) { runApp() };
   if (ev.target == calculateEl) { calculate() };
  }
-
- // Just updated the view. Not linked with the source of truth object. WIP.
- function deleteLoadHandler(ev) {
+ function deleteLoadHandler(ev, branchesObj) {
   const deleteBtn = ev.target.dataset.action;
   if (deleteBtn == "delete") {
-   ev.target.parentNode.remove(ev.target)
+   const currentBranch = ev.target.parentNode.parentNode;
+   const currentBranchId = currentBranch.dataset.branch;
+   branchesObj[`branch${currentBranchId}`].loads--; // Remove load from source of truth object.
+   ev.target.parentNode.remove(ev.target); // Remove load element from DOM
   }
  }
- // Event Listeners 
+ // Event Listeners used before start the app.
  window.addEventListener('click', startHandler);
- window.addEventListener('click', deleteLoadHandler);
  branchInputEl.addEventListener('change', grabBranchValue);
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);
