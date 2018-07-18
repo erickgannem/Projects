@@ -142,7 +142,7 @@ input.text-box {
 div.panel-section * {
 	margin: 5px;
 }
-label.label-styling {
+.label-styling {
 	padding: 5px;
 	border-radius: 5px;
 	border: 1px solid rgba(255, 255, 255, 0.5);
@@ -283,11 +283,25 @@ div.branch-header h3 {
 	-webkit-box-pack: center;
 	    -ms-flex-pack: center;
 	        justify-content: center;
- }
- div.branches-wrapper, div.load-wrapper {
- 	display: -webkit-box;
- 	display: -ms-flexbox;
- 	display: flex;
- 	-ms-flex-wrap: wrap;
- 	    flex-wrap: wrap;
- }
+}
+div.branches-wrapper, div.load-wrapper {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-wrap: wrap;
+	    flex-wrap: wrap;
+}
+span.delete-load {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	background-color: #ec5f5d;
+	border-color: #e94644;
+	font-weight: bolder;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+span.delete-load:hover {
+	cursor: pointer;
+}

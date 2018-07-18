@@ -158,6 +158,7 @@ window.addEventListener('DOMContentLoaded', function() {
   const template = function(id) {
    return `
     <div class="load-wrapper" data-load=${id}>
+     <span class="label-styling delete-load" data-action="delete">X</span>
      <input type="text" name="l${id}" id="l${id}" class="load-input text-box" placeholder="E.g 3*25">
      <label class="label-styling" for="l${id}"><b>KVA</b></label>
     </div>
@@ -328,16 +329,24 @@ window.addEventListener('DOMContentLoaded', function() {
   };
   element.addEventListener('change', voltageSourceHandler);
  };
-
  function grabBranchValue() {
   branchInputElValue = branchInputEl.value;
  }
-
- // Event Listeners 
- window.addEventListener('click', function(ev) {
+ function startHandler(ev) {
   if (ev.target == addBranchesEl) { runApp() };
   if (ev.target == calculateEl) { calculate() };
- });
+ }
+
+ // Just updated the view. Not linked with the source of truth object. WIP.
+ function deleteLoadHandler(ev) {
+  const deleteBtn = ev.target.dataset.action;
+  if (deleteBtn == "delete") {
+   ev.target.parentNode.remove(ev.target)
+  }
+ }
+ // Event Listeners 
+ window.addEventListener('click', startHandler);
+ window.addEventListener('click', deleteLoadHandler);
  branchInputEl.addEventListener('change', grabBranchValue);
  typeRadioEls.forEach(setSystemType);
  voltageRadioEls.forEach(setVoltageSource);
