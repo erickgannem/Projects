@@ -136,11 +136,19 @@ window.addEventListener('DOMContentLoaded', function() {
     </div>
    `;
   };
+  var Branch = {
+   init: function init(id, template) {
+    this.id = id;
+    this.loads = 0;
+    this.template = template;
+   },
+   addLoad: function addLoad() {
+    this.loads++;
+   }
+  }
   for(let i = 0; i < qty; i++) {
-   branchesObj[`branch${i + 1}`] = Object.create({});
-   branchesObj[`branch${i + 1}`]['id'] = i + 1;
-   branchesObj[`branch${i + 1}`]['loads']  = 0;
-   branchesObj[`branch${i + 1}`]['template'] = template(i + 1);
+   branchesObj[`branch${i + 1}`] = Object.create(Branch);
+   branchesObj[`branch${i + 1}`].init(i + 1, template(i + 1));
   };
   return branchesObj;
  };
@@ -172,16 +180,16 @@ window.addEventListener('DOMContentLoaded', function() {
   const addLoadPerBranchOnClick = function(ev) {
    for (let i = 0, current, loads; i < branchTargets.length; i++) {
     current = branchesObj[`branch${i + 1}`];
-    current.loads++
-    renderNewLoadBox(branchTargets[i], template, current.loads)
-   }
-  }
+    current.addLoad();
+    renderNewLoadBox(branchTargets[i], template, current.loads);
+   };
+  };
   const addLoadOnClick = function(ev) {
    const dataId = ev.target.dataset.loadButton;
    const currentBranchEl = branchTargets[dataId - 1];
    const currentBranchDataId = currentBranchEl.dataset.branch;
    const branchObj = branchesObj[`branch${dataId}`];
-   branchObj['loads']++;
+   branchObj.addLoad();
    renderNewLoadBox(currentBranchEl, template, branchObj.loads);
   };
   function addLoadEventHandler(ev) {
