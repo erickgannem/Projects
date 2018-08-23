@@ -49,13 +49,16 @@ div.inner-wrapper {
  -webkit-box-direction: normal;
      -ms-flex-direction: row;
          flex-direction: row;
- -ms-flex-preferred-size: 100%;
-     flex-basis: 100%;
  -webkit-box-align: start;
      -ms-flex-align: start;
          align-items: flex-start;
  -ms-flex-pack: distribute;
      justify-content: space-around;
+}
+@media screen and (max-width:768px) {
+ div.inner-wrapper {
+  flex-direction: column;
+ }
 }
 div.info {
  display: -webkit-box;
@@ -73,6 +76,11 @@ div.info {
          align-items: center;
  width: 100%;
  text-align: center;
+}
+@media screen and (max-width: 600px) {
+ .info {
+  flex-direction: column !important;
+ }
 }
 div.info h4 {
  font-size: 25px;
@@ -130,6 +138,12 @@ button.btn-calculate {
 	        box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.6);
 	margin: 3px 0;
 }
+@media screen and (max-width: 768px) {
+ .btn-calculate {
+  margin: 10px 0 !important;
+  height: 50px !important;
+ }
+}
 button.btn:hover, button.btn:hover label {
 	cursor: pointer;
 }
@@ -168,6 +182,12 @@ div.left-panel {
  -ms-flex-preferred-size: 30%;
      flex-basis: 30%;
  margin-right: 5px;
+}
+@media screen and (max-width:768px) {
+ .left-panel {
+  margin-right: 0px !important;
+  width: 100% !important;
+ }
 }
 div.system-type, div.branch-request, div.distances, div.distance-boxes  {
  display: -webkit-box;
@@ -208,6 +228,7 @@ div.distance-item label {
 input.distance-input {
 	-ms-flex-preferred-size: 100%;
 	    flex-basis: 100%;
+ width: 70%;
 }
 p.more-info {
  font-style: italic;
@@ -230,6 +251,11 @@ div.right-panel {
 	-ms-flex-wrap: wrap;
 	    flex-wrap: wrap;
     margin-left: 5px;
+}
+@media screen and (max-width:768px) {
+ .right-panel {
+  margin-left: 0px !important;
+ }
 }
 div.branch-item, div.gauges-box {
 	display: -webkit-box;
@@ -288,6 +314,7 @@ div.branches-wrapper, div.load-wrapper {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
+ justify-content: center;
 	-ms-flex-wrap: wrap;
 	    flex-wrap: wrap;
 }
@@ -304,4 +331,16 @@ span.delete-load {
 }
 span.delete-load:hover {
 	cursor: pointer;
+}
+@media (max-width: 940px) {
+ .left-panel, .right-panel {
+  flex-basis: 50% !important;
+  width: 100% !important;
+ }
+ .load-wrapper {
+  flex-wrap: nowrap !important;
+ }
+ .load-wrapper input[type="text"] {
+  width: 70%;
+ }
 }
